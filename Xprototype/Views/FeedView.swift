@@ -10,30 +10,39 @@ import SwiftUI
 
 struct FeedView: View {
     private let posts = Post.mock
+    @State private var selectedTab = 0
+    @State private var headerOffset: CGFloat = 0
+    
+    // Get actual device safe area from window
+    private var safeAreaTop: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.windows.first?.safeAreaInsets.top ?? 0
+    }
+    
+    private let headerHeight: CGFloat = 44
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0, pinnedViews: []) {
-                ForEach(posts) { post in
-                    PostCell(post: post)
-                    Divider()
+        ZStack(alignment: .top) {
+            ScrollViewWithHeader(headerOffset: $headerOffset, safeAreaTop: safeAreaTop, headerHeight: headerHeight) {
+                LazyVStack(spacing: 0, pinnedViews: []) {
+                    ForEach(posts) { post in
+                        PostCell(post: post)
+                        Divider()
+                    }
                 }
             }
+            
+            // Header
+            FeedHeader(selectedTab: $selectedTab, safeAreaTop: safeAreaTop)
+                .offset(y: headerOffset)
+                .opacity(max(0.0, 1.0 + (headerOffset / 96.0)))
+                .allowsHitTesting(headerOffset >= -44)
+                .zIndex(1)
         }
         .background(Color(.systemBackground))
-        
-        // ←←← THE MAGIC COMBO (copy exactly)
-        .navigationTitle("Home")                          // Needed for large-title scroll behavior
-        .navigationBarTitleDisplayMode(.inline)           // Enables the progressive blur
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                // Invisible placeholder – hides the text but keeps blur alive
-                Color.clear
-                    .frame(height: 0)
-            }
-        }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        .ignoresSafeArea(edges: .top)
+        .navigationBarHidden(true)
     }
 }
 

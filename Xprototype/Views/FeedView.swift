@@ -20,11 +20,17 @@ struct FeedView: View {
             .first?.windows.first?.safeAreaInsets.top ?? 0
     }
     
+    private var safeAreaBottom: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.windows.first?.safeAreaInsets.bottom ?? 0
+    }
+    
     private let headerHeight: CGFloat = 44
     
     var body: some View {
         ZStack(alignment: .top) {
-            ScrollViewWithHeader(headerOffset: $headerOffset, safeAreaTop: safeAreaTop, headerHeight: headerHeight) {
+            ScrollViewWithHeader(headerOffset: $headerOffset, safeAreaTop: safeAreaTop, safeAreaBottom: safeAreaBottom, headerHeight: headerHeight) {
                 LazyVStack(spacing: 0, pinnedViews: []) {
                     ForEach(posts) { post in
                         PostCell(post: post)
@@ -41,7 +47,7 @@ struct FeedView: View {
                 .zIndex(1)
         }
         .background(Color(.systemBackground))
-        .ignoresSafeArea(edges: .top)
+        .ignoresSafeArea(edges: [.top, .bottom])
         .navigationBarHidden(true)
     }
 }

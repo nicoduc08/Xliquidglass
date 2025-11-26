@@ -12,11 +12,13 @@ struct ScrollViewWithHeader<Content: View>: UIViewRepresentable {
     let content: Content
     @Binding var headerOffset: CGFloat
     let safeAreaTop: CGFloat
+    let safeAreaBottom: CGFloat
     let headerHeight: CGFloat
     
-    init(headerOffset: Binding<CGFloat>, safeAreaTop: CGFloat, headerHeight: CGFloat, @ViewBuilder content: () -> Content) {
+    init(headerOffset: Binding<CGFloat>, safeAreaTop: CGFloat, safeAreaBottom: CGFloat, headerHeight: CGFloat, @ViewBuilder content: () -> Content) {
         self._headerOffset = headerOffset
         self.safeAreaTop = safeAreaTop
+        self.safeAreaBottom = safeAreaBottom
         self.headerHeight = headerHeight
         self.content = content()
     }
@@ -50,10 +52,11 @@ struct ScrollViewWithHeader<Content: View>: UIViewRepresentable {
     func updateUIView(_ uiView: UIScrollView, context: Context) {
         context.coordinator.hostingController?.rootView = content
         
-        // Set fixed content inset for header space
+        // Set fixed content inset for header and tab bar space
         let topInset = safeAreaTop + headerHeight
-        if uiView.contentInset.top != topInset {
-            uiView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
+        let bottomInset = safeAreaBottom
+        if uiView.contentInset.top != topInset || uiView.contentInset.bottom != bottomInset {
+            uiView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: bottomInset, right: 0)
             uiView.scrollIndicatorInsets = uiView.contentInset
         }
         

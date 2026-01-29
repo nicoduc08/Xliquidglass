@@ -13,6 +13,9 @@ extension Color {
     
     /// Light gray color used for ellipsis icon
     static let ellipsisIcon = Color(hex: "#B9CAD3")
+
+    /// Blue color used for selected header tab
+    static let selectedTab = Color(hex: "#1D9BF0")
     
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

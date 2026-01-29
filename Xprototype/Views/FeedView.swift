@@ -26,9 +26,12 @@ struct FeedView: View {
             .first?.windows.first?.safeAreaInsets.bottom ?? 0
     }
     
-    private let headerHeight: CGFloat = 44
+    // Header height includes avatar row (32 + 6), tabs (44), and divider (1)
+    private let headerHeight: CGFloat = 83
     
     var body: some View {
+        let totalHeaderHeight = safeAreaTop + headerHeight
+
         ZStack(alignment: .top) {
             ScrollViewWithHeader(headerOffset: $headerOffset, safeAreaTop: safeAreaTop, safeAreaBottom: safeAreaBottom, headerHeight: headerHeight) {
                 LazyVStack(spacing: 0, pinnedViews: []) {
@@ -42,7 +45,7 @@ struct FeedView: View {
             // Header
             FeedHeader(selectedTab: $selectedTab, safeAreaTop: safeAreaTop)
                 .offset(y: headerOffset)
-                .opacity(max(0.0, 1.0 + (headerOffset / 96.0)))
+                .opacity(max(0.0, 1.0 + (headerOffset / totalHeaderHeight)))
                 .allowsHitTesting(headerOffset >= -44)
                 .zIndex(1)
         }

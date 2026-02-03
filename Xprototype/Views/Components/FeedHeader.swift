@@ -10,6 +10,7 @@ import SwiftUI
 struct FeedHeader: View {
     @Binding var selectedTab: Int
     let safeAreaTop: CGFloat
+    var onAvatarTap: (() -> Void)? = nil
     @Namespace private var underlineNamespace
     
     var body: some View {
@@ -21,6 +22,9 @@ struct FeedHeader: View {
                     .scaledToFill()
                     .frame(width: 32, height: 32)
                     .clipShape(Circle())
+                    .onTapGesture {
+                        onAvatarTap?()
+                    }
                 Spacer()
             }
             .padding(.horizontal, 12)
@@ -96,4 +100,3 @@ private struct TabTextBoundsKey: PreferenceKey {
         value.merge(nextValue(), uniquingKeysWith: { $1 })
     }
 }
-

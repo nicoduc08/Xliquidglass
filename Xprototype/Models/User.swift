@@ -33,8 +33,8 @@ struct User {
 
 extension User {
     static let current = User(
-        displayName: "Nicolas",
-        username: "nicolas_dev",
+        displayName: "Nico",
+        username: "nicoduc",
         avatarName: "Avatar 1",
         isVerified: true,
         followersCount: 1234,

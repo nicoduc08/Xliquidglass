@@ -15,11 +15,11 @@ struct SidebarView: View {
         ZStack(alignment: .leading) {
             // Dimmed background overlay
             if isShowing {
-                Color(red: 0.4, green: 0.45, blue: 0.35)
-                    .opacity(0.2)
+                Color(red: 0.737, green: 0.769, blue: 0.788)
+                    .opacity(0.35)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation(.easeOut(duration: 0.25)) {
+                        withAnimation(.easeOut(duration: 0.1)) {
                             isShowing = false
                         }
                     }
@@ -78,7 +78,7 @@ struct SidebarView: View {
             DragGesture()
                 .onEnded { value in
                     if value.translation.width < -50 {
-                        withAnimation(.easeOut(duration: 0.25)) {
+                        withAnimation(.easeOut(duration: 0.1)) {
                             isShowing = false
                         }
                     }

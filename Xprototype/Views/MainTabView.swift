@@ -12,10 +12,15 @@ import UIKit
 struct MainTabView: View {
     @State private var selectedTab = 0
     @State private var isSidebarShowing = false
+    @State private var isSettingsShowing = false
     
     // Sidebar width for content offset
     private var sidebarWidth: CGFloat {
         UIScreen.main.bounds.width * 0.78
+    }
+    
+    private var screenWidth: CGFloat {
+        UIScreen.main.bounds.width
     }
     
     var body: some View {
@@ -53,8 +58,15 @@ struct MainTabView: View {
             }
             
             // Sidebar overlay
-            SidebarView(isShowing: $isSidebarShowing, user: .current)
+            SidebarView(isShowing: $isSidebarShowing, isSettingsShowing: $isSettingsShowing, user: .current)
                 .zIndex(2)
+            
+            // Settings screen - slides in from right
+            if isSettingsShowing {
+                SettingsView(isShowing: $isSettingsShowing, username: User.current.username)
+                    .transition(.move(edge: .trailing))
+                    .zIndex(3)
+            }
         }
     }
     

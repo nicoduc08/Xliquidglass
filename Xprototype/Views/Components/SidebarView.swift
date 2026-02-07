@@ -7,6 +7,7 @@ import SwiftUI
 
 struct SidebarView: View {
     @Binding var isShowing: Bool
+    @Binding var isSettingsShowing: Bool
     let user: User
     
     private let sidebarWidth: CGFloat = UIScreen.main.bounds.width * 0.78
@@ -49,7 +50,13 @@ struct SidebarView: View {
                             Divider()
                                 .padding(.vertical, 12)
                             
-                            SidebarMenuItem(icon: "gearshape", title: "Settings and privacy")
+                            SidebarMenuItem(icon: "gearshape", title: "Settings and privacy") {
+                                // Close sidebar and open settings simultaneously
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    isShowing = false
+                                    isSettingsShowing = true
+                                }
+                            }
                         }
                         .padding(.top, 8)
                     }
@@ -152,10 +159,11 @@ struct SidebarHeader: View {
 struct SidebarMenuItem: View {
     let icon: String
     let title: String
+    var action: (() -> Void)? = nil
     
     var body: some View {
         Button(action: {
-            // Handle menu item tap
+            action?()
         }) {
             HStack(spacing: 16) {
                 Image(systemName: icon)
@@ -177,5 +185,5 @@ struct SidebarMenuItem: View {
 }
 
 #Preview {
-    SidebarView(isShowing: .constant(true), user: .current)
+    SidebarView(isShowing: .constant(true), isSettingsShowing: .constant(false), user: .current)
 }

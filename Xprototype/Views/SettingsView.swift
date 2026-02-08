@@ -114,18 +114,22 @@ struct SettingsView: View {
         .ignoresSafeArea(edges: [.top])
         .offset(x: dragOffset)
         .animation(isDragging ? nil : .easeOut(duration: 0.25), value: dragOffset)
-        .gesture(
+        .simultaneousGesture(
             DragGesture()
                 .updating($dragOffset) { value, state, _ in
-                    // Only allow right-swipe (positive translation)
+                    // Only respond to swipes starting near the left edge
+                    guard value.startLocation.x < 40 else { return }
                     if value.translation.width > 0 {
                         state = value.translation.width
                     }
                 }
-                .onChanged { _ in
-                    isDragging = true
+                .onChanged { value in
+                    if value.startLocation.x < 40 {
+                        isDragging = true
+                    }
                 }
                 .onEnded { value in
+                    guard value.startLocation.x < 40 else { return }
                     isDragging = false
                     let screenWidth = UIScreen.main.bounds.width
                     // Dismiss if dragged past 35% of screen or flicked fast enough

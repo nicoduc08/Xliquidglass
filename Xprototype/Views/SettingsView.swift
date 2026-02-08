@@ -143,7 +143,8 @@ struct SettingsMenuItem: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Color.secondaryText)
             }
-            .padding(.horizontal, 20)
+            .padding(.leading, 16)
+            .padding(.trailing, 20)
             .padding(.vertical, 16)
         }
         .buttonStyle(.plain)

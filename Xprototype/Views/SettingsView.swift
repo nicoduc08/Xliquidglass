@@ -9,6 +9,8 @@ struct SettingsView: View {
     @Binding var isShowing: Bool
     let username: String
     @Environment(\.colorScheme) private var colorScheme
+    @GestureState private var dragOffset: CGFloat = 0
+    @State private var isDragging = false
     
     // Get actual device safe area from window
     private var safeAreaTop: CGFloat {
@@ -110,6 +112,30 @@ struct SettingsView: View {
         }
         .background(backgroundColor)
         .ignoresSafeArea(edges: [.top])
+        .offset(x: dragOffset)
+        .animation(isDragging ? nil : .easeOut(duration: 0.25), value: dragOffset)
+        .gesture(
+            DragGesture()
+                .updating($dragOffset) { value, state, _ in
+                    // Only allow right-swipe (positive translation)
+                    if value.translation.width > 0 {
+                        state = value.translation.width
+                    }
+                }
+                .onChanged { _ in
+                    isDragging = true
+                }
+                .onEnded { value in
+                    isDragging = false
+                    let screenWidth = UIScreen.main.bounds.width
+                    // Dismiss if dragged past 35% of screen or flicked fast enough
+                    if value.translation.width > screenWidth * 0.35 || value.predictedEndTranslation.width > screenWidth * 0.5 {
+                        withAnimation(.easeOut(duration: 0.25)) {
+                            isShowing = false
+                        }
+                    }
+                }
+        )
     }
 }
 

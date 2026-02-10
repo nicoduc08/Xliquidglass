@@ -35,28 +35,29 @@ struct SidebarView: View {
                     // Menu items
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            SidebarMenuItem(icon: "person", title: "Profile")
-                            SidebarMenuItem(icon: "star.fill", title: "Premium+")
-                            SidebarMenuItem(icon: "dollarsign.circle", title: "Money")
-                            SidebarMenuItem(icon: "play.rectangle", title: "Video")
-                            SidebarMenuItem(icon: "person.2", title: "Communities")
-                            SidebarMenuItem(icon: "bookmark", title: "Bookmarks")
-                            SidebarMenuItem(icon: "list.bullet", title: "Lists")
-                            SidebarMenuItem(icon: "mic", title: "Spaces")
-                            SidebarMenuItem(icon: "switch.2", title: "Feature switches")
-                            SidebarMenuItem(icon: "wand.and.stars", title: "Creator Studio")
-                            SidebarMenuItem(icon: "video.badge.waveform", title: "Conferences")
+                            SidebarMenuItem(icon: "icon-sidebar-profile", title: "Profile")
+                            SidebarMenuItem(icon: "icon-sidebar-premium", title: "Premium+")
+                            SidebarMenuItem(icon: "icon-sidebar-money", title: "Money")
+                            SidebarMenuItem(icon: "icon-sidebar-video", title: "Video")
+                            SidebarMenuItem(icon: "icon-sidebar-communities", title: "Communities")
+                            SidebarMenuItem(icon: "icon-sidebar-bookmark", title: "Bookmarks")
+                            SidebarMenuItem(icon: "icon-sidebar-lists", title: "Lists")
+                            SidebarMenuItem(icon: "icon-sidebar-spaces", title: "Spaces")
+                            SidebarMenuItem(icon: "icon-sidebar-studio", title: "Creator Studio")
+                            SidebarMenuItem(icon: "icon-sidebar-conferences", title: "Conferences")
                             
                             Divider()
                                 .padding(.vertical, 12)
                             
-                            SidebarMenuItem(icon: "gearshape", title: "Settings and privacy") {
+                            SidebarMenuItem(icon: "icon-sidebar-grok", title: "Open Grok", titleFont: .chirpRegular(size: 15))
+                            SidebarMenuItem(icon: "icon-sidebar-settings", title: "Settings and privacy", titleFont: .chirpRegular(size: 15)) {
                                 // Close sidebar and open settings simultaneously
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     isShowing = false
                                     isSettingsShowing = true
                                 }
                             }
+                            SidebarMenuItem(icon: "icon-sidebar-help", title: "Help Center", titleFont: .chirpRegular(size: 15))
                         }
                         .padding(.top, 8)
                     }
@@ -159,6 +160,7 @@ struct SidebarHeader: View {
 struct SidebarMenuItem: View {
     let icon: String
     let title: String
+    var titleFont: Font = .chirpBold(size: 20)
     var action: (() -> Void)? = nil
     
     var body: some View {
@@ -166,13 +168,16 @@ struct SidebarMenuItem: View {
             action?()
         }) {
             HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 22))
+                Image(icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(Color(.label))
                     .frame(width: 28)
                 
                 Text(title)
-                    .font(.chirpBold(size: 20))
+                    .font(titleFont)
                     .foregroundStyle(Color(.label))
                 
                 Spacer()

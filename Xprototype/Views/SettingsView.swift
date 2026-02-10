@@ -97,14 +97,14 @@ struct SettingsView: View {
             // Menu items
             ScrollView {
                 VStack(spacing: 0) {
-                    SettingsMenuItem(icon: "person", title: "Your account")
-                    SettingsMenuItem(icon: "lock.shield", title: "Security and account access")
-                    SettingsMenuItem(icon: "star", title: "Premium")
-                    SettingsMenuItem(icon: "list.bullet.rectangle", title: "Timeline")
-                    SettingsMenuItem(icon: "hand.raised", title: "Privacy and safety")
-                    SettingsMenuItem(icon: "bell", title: "Notifications")
-                    SettingsMenuItem(icon: "textformat.size", title: "Accessibility, display, and languages")
-                    SettingsMenuItem(icon: "ellipsis.circle", title: "Additional resources")
+                    SettingsMenuItem(icon: "icon-sidebar-profile", title: "Your account")
+                    SettingsMenuItem(icon: "icon-lock", title: "Security and account access")
+                    SettingsMenuItem(icon: "icon-sidebar-premium", title: "Premium")
+                    SettingsMenuItem(icon: "icon-post", title: "Timeline")
+                    SettingsMenuItem(icon: "icon-safety", title: "Privacy and safety")
+                    SettingsMenuItem(icon: "icon-bell-outline", title: "Notifications")
+                    SettingsMenuItem(icon: "icon-accessibility", title: "Accessibility, display, and languages")
+                    SettingsMenuItem(icon: "icon-resources", title: "Additional resources")
                 }
             }
             
@@ -153,25 +153,32 @@ struct SettingsMenuItem: View {
         colorScheme == .dark ? .white : Color(.label)
     }
     
+    private var chevronColor: Color {
+        colorScheme == .dark ? Color(hex: "#595D62") : Color(hex: "#829AAB")
+    }
+    
     var body: some View {
         Button(action: {
             // Handle menu item tap
         }) {
             HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
+                Image(icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(textColor)
                     .frame(width: 28)
                 
                 Text(title)
-                    .font(.chirpBold(size: 15))
+                    .font(.chirpMedium(size: 15))
                     .foregroundStyle(textColor)
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(chevronColor)
             }
             .padding(.leading, 16)
             .padding(.trailing, 20)

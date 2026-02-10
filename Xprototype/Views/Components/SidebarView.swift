@@ -8,6 +8,7 @@ import SwiftUI
 struct SidebarView: View {
     @Binding var isShowing: Bool
     @Binding var isSettingsShowing: Bool
+    @Binding var isPremiumShowing: Bool
     let user: User
     
     private let sidebarWidth: CGFloat = UIScreen.main.bounds.width * 0.78
@@ -36,7 +37,12 @@ struct SidebarView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             SidebarMenuItem(icon: "icon-sidebar-profile", title: "Profile")
-                            SidebarMenuItem(icon: "icon-sidebar-premium", title: "Premium+")
+                            SidebarMenuItem(icon: "icon-sidebar-premium", title: "Premium+") {
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    isShowing = false
+                                    isPremiumShowing = true
+                                }
+                            }
                             SidebarMenuItem(icon: "icon-sidebar-money", title: "Money")
                             SidebarMenuItem(icon: "icon-sidebar-video", title: "Video")
                             SidebarMenuItem(icon: "icon-sidebar-communities", title: "Communities")
@@ -190,5 +196,5 @@ struct SidebarMenuItem: View {
 }
 
 #Preview {
-    SidebarView(isShowing: .constant(true), isSettingsShowing: .constant(false), user: .current)
+    SidebarView(isShowing: .constant(true), isSettingsShowing: .constant(false), isPremiumShowing: .constant(false), user: .current)
 }

@@ -13,6 +13,7 @@ struct MainTabView: View {
     @State private var selectedTab = 0
     @State private var isSidebarShowing = false
     @State private var isSettingsShowing = false
+    @State private var isPremiumShowing = false
     
     // Sidebar width for content offset
     private var sidebarWidth: CGFloat {
@@ -58,12 +59,19 @@ struct MainTabView: View {
             }
             
             // Sidebar overlay
-            SidebarView(isShowing: $isSidebarShowing, isSettingsShowing: $isSettingsShowing, user: .current)
+            SidebarView(isShowing: $isSidebarShowing, isSettingsShowing: $isSettingsShowing, isPremiumShowing: $isPremiumShowing, user: .current)
                 .zIndex(2)
             
             // Settings screen - slides in from right
             if isSettingsShowing {
                 SettingsView(isShowing: $isSettingsShowing, username: User.current.username)
+                    .transition(.move(edge: .trailing))
+                    .zIndex(3)
+            }
+            
+            // Premium screen - slides in from right
+            if isPremiumShowing {
+                PremiumView(isShowing: $isPremiumShowing, username: User.current.username)
                     .transition(.move(edge: .trailing))
                     .zIndex(3)
             }

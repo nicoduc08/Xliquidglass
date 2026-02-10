@@ -49,15 +49,15 @@ struct SidebarView: View {
                             Divider()
                                 .padding(.vertical, 12)
                             
-                            SidebarMenuItem(icon: "icon-sidebar-grok", title: "Open Grok", titleFont: .chirpRegular(size: 15))
-                            SidebarMenuItem(icon: "icon-sidebar-settings", title: "Settings and privacy", titleFont: .chirpRegular(size: 15)) {
+                            SidebarMenuItem(icon: "icon-sidebar-grok", title: "Open Grok", titleFont: .chirpMedium(size: 15))
+                            SidebarMenuItem(icon: "icon-sidebar-settings", title: "Settings and privacy", titleFont: .chirpMedium(size: 15)) {
                                 // Close sidebar and open settings simultaneously
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     isShowing = false
                                     isSettingsShowing = true
                                 }
                             }
-                            SidebarMenuItem(icon: "icon-sidebar-help", title: "Help Center", titleFont: .chirpRegular(size: 15))
+                            SidebarMenuItem(icon: "icon-sidebar-help", title: "Help Center", titleFont: .chirpMedium(size: 15))
                         }
                         .padding(.top, 8)
                     }

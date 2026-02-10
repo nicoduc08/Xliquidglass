@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct FeedView: View {
+    @Binding var isSidebarShowing: Bool
+    
     private let posts = Post.mock
     @State private var selectedTab = 0
     @State private var headerOffset: CGFloat = 0
@@ -43,11 +45,15 @@ struct FeedView: View {
             }
             
             // Header
-            FeedHeader(selectedTab: $selectedTab, safeAreaTop: safeAreaTop)
-                .offset(y: headerOffset)
-                .opacity(max(0.0, 1.0 + (headerOffset / totalHeaderHeight)))
-                .allowsHitTesting(headerOffset >= -44)
-                .zIndex(1)
+            FeedHeader(selectedTab: $selectedTab, safeAreaTop: safeAreaTop) {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    isSidebarShowing = true
+                }
+            }
+            .offset(y: headerOffset)
+            .opacity(max(0.0, 1.0 + (headerOffset / totalHeaderHeight)))
+            .allowsHitTesting(headerOffset >= -44)
+            .zIndex(1)
         }
         .background(Color(.systemBackground))
         .ignoresSafeArea(edges: [.top, .bottom])
@@ -57,6 +63,6 @@ struct FeedView: View {
 
 #Preview {
     NavigationStack {
-        FeedView()
+        FeedView(isSidebarShowing: .constant(false))
     }
 }

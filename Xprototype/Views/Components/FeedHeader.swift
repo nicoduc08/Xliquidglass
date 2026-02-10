@@ -16,7 +16,7 @@ struct FeedHeader: View {
     var body: some View {
         VStack(spacing: 0) {
             // Avatar row (above tabs)
-            HStack {
+            HStack(alignment: .center) {
                 Image("Avatar 1")
                     .resizable()
                     .scaledToFill()
@@ -26,6 +26,16 @@ struct FeedHeader: View {
                         onAvatarTap?()
                     }
                 Spacer()
+                Image("icon-x")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 24)
+                    .foregroundStyle(Color(.label))
+                Spacer()
+                // Invisible spacer to balance the avatar
+                Color.clear
+                    .frame(width: 32, height: 32)
             }
             .padding(.horizontal, 12)
             .padding(.bottom, 6)

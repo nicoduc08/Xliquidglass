@@ -10,6 +10,7 @@
 	<array>
 		<string>Chirp-Bold.ttf</string>
 		<string>Chirp-Regular.ttf</string>
+        <string>Chirp-Medium.ttf</string>
 		<string>Chirp-Heavy.ttf</string>
 	</array>
 </dict>

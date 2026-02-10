@@ -72,13 +72,18 @@ struct TabButton: View {
     let id: Int
     let isSelected: Bool
     let action: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var selectedColor: Color {
+        colorScheme == .dark ? .white : .black
+    }
     
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Text(title)
                     .font(.chirpBold(size: 15))
-                    .foregroundStyle(isSelected ? Color.black : Color.secondaryText)
+                    .foregroundStyle(isSelected ? selectedColor : Color.secondaryText)
                     .fixedSize()
                     .anchorPreference(key: TabTextBoundsKey.self, value: .bounds) { anchor in
                         [id: anchor]

@@ -41,6 +41,14 @@ extension Font {
         return .system(size: size, weight: .bold)
     }
     
+    static func chirpMedium(size: CGFloat) -> Font {
+        if let font = loadFontFromBundle(name: "Chirp-Medium", size: size) {
+            return font
+        }
+        // Fallback to system font
+        return .system(size: size, weight: .medium)
+    }
+    
     static func chirpRegular(size: CGFloat) -> Font {
         if let font = loadFontFromBundle(name: "Chirp-Regular", size: size) {
             return font

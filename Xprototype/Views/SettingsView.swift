@@ -176,13 +176,16 @@ struct SettingsMenuItem: View {
                 
                 Spacer()
                 
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
+                Image("icon-chevron")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
                     .foregroundStyle(chevronColor)
             }
             .padding(.leading, 16)
             .padding(.trailing, 20)
-            .padding(.vertical, 16)
+            .frame(height: 56)
         }
         .buttonStyle(.plain)
     }

@@ -58,6 +58,18 @@ struct FeedView: View {
         .background(Color(.systemBackground))
         .ignoresSafeArea(edges: [.top, .bottom])
         .navigationBarHidden(true)
+        .simultaneousGesture(
+            DragGesture()
+                .onEnded { value in
+                    // Only respond to swipes starting near the left edge
+                    guard value.startLocation.x < 40 else { return }
+                    if value.translation.width > 80 || value.predictedEndTranslation.width > 150 {
+                        withAnimation(.easeOut(duration: 0.25)) {
+                            isSidebarShowing = true
+                        }
+                    }
+                }
+        )
     }
 }
 

@@ -63,7 +63,7 @@ struct FeedHeader: View {
             Divider()
         }
         .padding(.top, safeAreaTop)
-        .background(.ultraThinMaterial)
+        .background(Color(.systemBackground))
     }
 }
 
@@ -78,12 +78,16 @@ struct TabButton: View {
         colorScheme == .dark ? .white : .black
     }
     
+    private var unselectedColor: Color {
+        colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
+    }
+    
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Text(title)
                     .font(.chirpBold(size: 15))
-                    .foregroundStyle(isSelected ? selectedColor : Color.secondaryText)
+                    .foregroundStyle(isSelected ? selectedColor : unselectedColor)
                     .fixedSize()
                     .anchorPreference(key: TabTextBoundsKey.self, value: .bounds) { anchor in
                         [id: anchor]

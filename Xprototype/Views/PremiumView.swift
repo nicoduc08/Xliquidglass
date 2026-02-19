@@ -76,35 +76,35 @@ struct PremiumView: View {
                     // Section 1: Quick access
                     PremiumSectionHeader(title: "Quick access")
                     
-                    PremiumMenuItem(icon: "sparkles", title: "SuperGrok")
-                    PremiumMenuItem(icon: "eye.slash", title: "Ads avoided")
-                    PremiumMenuItem(icon: "dot.radiowaves.left.and.right", title: "Radar")
-                    PremiumMenuItem(icon: "wand.and.stars", title: "Creator Studio")
-                    PremiumMenuItem(icon: "chart.bar", title: "Analytics")
-                    PremiumMenuItem(icon: "arrow.down.circle", title: "Offline videos")
-                    PremiumMenuItem(icon: "folder", title: "Bookmark Folders")
+                    PremiumMenuItem(icon: "icon-grok", title: "SuperGrok")
+                    PremiumMenuItem(icon: "icon-block", title: "Ads avoided")
+                    PremiumMenuItem(icon: "icon-radar", title: "Radar")
+                    PremiumMenuItem(icon: "icon-studio", title: "Creator Studio")
+                    PremiumMenuItem(icon: "icon-analytics", title: "Analytics")
+                    PremiumMenuItem(icon: "icon-offline", title: "Offline videos")
+                    PremiumMenuItem(icon: "icon-bookmarkfolder", title: "Bookmark Folders")
                     
                     // Section 2: Customization
                     PremiumSectionHeader(title: "Customization")
                     
-                    PremiumMenuItem(icon: "at", title: "Request an inactive handle")
-                    PremiumMenuItem(icon: "person.crop.square", title: "Profile customization")
-                    PremiumMenuItem(icon: "text.alignleft", title: "Expanded Bio")
-                    PremiumMenuItem(icon: "square.grid.2x2", title: "Customize navigation")
-                    PremiumMenuItem(icon: "app.badge", title: "App icons")
-                    PremiumMenuItem(icon: "paintbrush", title: "Theme")
+                    PremiumMenuItem(icon: "icon-at", title: "Request an inactive handle")
+                    PremiumMenuItem(icon: "icon-person", title: "Profile customization")
+                    PremiumMenuItem(icon: "icon-bio", title: "Expanded Bio")
+                    PremiumMenuItem(icon: "icon-pin", title: "Customize navigation")
+                    PremiumMenuItem(icon: "icon-smartphone", title: "App icons")
+                    PremiumMenuItem(icon: "icon-theme", title: "Theme")
                     
                     // Section 3: Verification & Security
                     PremiumSectionHeader(title: "Verification & Security")
                     
-                    PremiumMenuItem(icon: "checkmark.shield", title: "ID Verification")
+                    PremiumMenuItem(icon: "icon-idverification", title: "ID Verification")
                     
                     // Section 4: Support
                     PremiumSectionHeader(title: "Support")
                     
-                    PremiumMenuItem(icon: "questionmark.circle", title: "Help Center")
-                    PremiumMenuItem(icon: "envelope", title: "Message @premium for support")
-                    PremiumMenuItem(icon: "creditcard", title: "Manage your subscription")
+                    PremiumMenuItem(icon: "icon-help", title: "Help Center")
+                    PremiumMenuItem(icon: "icon-envelope", title: "Message @premium for support")
+                    PremiumMenuItem(icon: "icon-settings", title: "Manage your subscription")
                 }
             }
             
@@ -179,10 +179,12 @@ struct PremiumMenuItem: View {
             // Handle menu item tap
         }) {
             HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
+                Image(icon)
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(textColor)
-                    .frame(width: 28)
                 
                 Text(title)
                     .font(.chirpMedium(size: 15))

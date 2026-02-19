@@ -97,9 +97,9 @@ struct SettingsView: View {
             // Menu items
             ScrollView {
                 VStack(spacing: 0) {
-                    SettingsMenuItem(icon: "icon-sidebar-profile", title: "Your account")
+                    SettingsMenuItem(icon: "icon-profile", title: "Your account")
                     SettingsMenuItem(icon: "icon-lock", title: "Security and account access")
-                    SettingsMenuItem(icon: "icon-sidebar-premium", title: "Premium")
+                    SettingsMenuItem(icon: "icon-premium", title: "Premium")
                     SettingsMenuItem(icon: "icon-post", title: "Timeline")
                     SettingsMenuItem(icon: "icon-safety", title: "Privacy and safety")
                     SettingsMenuItem(icon: "icon-bell-outline", title: "Notifications")
@@ -166,9 +166,8 @@ struct SettingsMenuItem: View {
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(textColor)
-                    .frame(width: 28)
                 
                 Text(title)
                     .font(.chirpMedium(size: 15))

@@ -36,34 +36,34 @@ struct SidebarView: View {
                     // Menu items
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            SidebarMenuItem(icon: "icon-sidebar-profile", title: "Profile")
-                            SidebarMenuItem(icon: "icon-sidebar-premium", title: "Premium+") {
+                            SidebarMenuItem(icon: "icon-profile", title: "Profile")
+                            SidebarMenuItem(icon: "icon-premium", title: "Premium+") {
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     isShowing = false
                                     isPremiumShowing = true
                                 }
                             }
-                            SidebarMenuItem(icon: "icon-sidebar-money", title: "Money")
-                            SidebarMenuItem(icon: "icon-sidebar-video", title: "Video")
-                            SidebarMenuItem(icon: "icon-sidebar-communities", title: "Communities")
-                            SidebarMenuItem(icon: "icon-sidebar-bookmark", title: "Bookmarks")
-                            SidebarMenuItem(icon: "icon-sidebar-lists", title: "Lists")
-                            SidebarMenuItem(icon: "icon-sidebar-spaces", title: "Spaces")
-                            SidebarMenuItem(icon: "icon-sidebar-studio", title: "Creator Studio")
-                            SidebarMenuItem(icon: "icon-sidebar-conferences", title: "Conferences")
+                            SidebarMenuItem(icon: "icon-money", title: "Money")
+                            SidebarMenuItem(icon: "icon-video", title: "Video")
+                            SidebarMenuItem(icon: "icon-communities", title: "Communities")
+                            SidebarMenuItem(icon: "icon-bookmarks", title: "Bookmarks")
+                            SidebarMenuItem(icon: "icon-lists", title: "Lists")
+                            SidebarMenuItem(icon: "icon-spaces", title: "Spaces")
+                            SidebarMenuItem(icon: "icon-studio", title: "Creator Studio")
+                            SidebarMenuItem(icon: "icon-conferences", title: "Conferences")
                             
                             Divider()
                                 .padding(.vertical, 12)
                             
-                            SidebarMenuItem(icon: "icon-sidebar-grok", title: "Open Grok", titleFont: .chirpMedium(size: 15))
-                            SidebarMenuItem(icon: "icon-sidebar-settings", title: "Settings and privacy", titleFont: .chirpMedium(size: 15)) {
+                            SidebarMenuItem(icon: "icon-grok", title: "Open Grok", titleFont: .chirpMedium(size: 15))
+                            SidebarMenuItem(icon: "icon-settings", title: "Settings and privacy", titleFont: .chirpMedium(size: 15)) {
                                 // Close sidebar and open settings simultaneously
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     isShowing = false
                                     isSettingsShowing = true
                                 }
                             }
-                            SidebarMenuItem(icon: "icon-sidebar-help", title: "Help Center", titleFont: .chirpMedium(size: 15))
+                            SidebarMenuItem(icon: "icon-help", title: "Help Center", titleFont: .chirpMedium(size: 15))
                         }
                         .padding(.top, 8)
                     }
@@ -180,7 +180,6 @@ struct SidebarMenuItem: View {
                     .scaledToFit()
                     .frame(width: 24, height: 24)
                     .foregroundStyle(Color(.label))
-                    .frame(width: 28)
                 
                 Text(title)
                     .font(titleFont)

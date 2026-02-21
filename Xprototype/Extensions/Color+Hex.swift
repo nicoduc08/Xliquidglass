@@ -9,7 +9,11 @@ import SwiftUI
 
 extension Color {
     /// Gray color used for handles, timestamps, and action bar elements
-    static let secondaryText = Color(hex: "#536471")
+    static let secondaryText = Color(UIColor { traitCollection in
+        traitCollection.userInterfaceStyle == .dark
+            ? UIColor(red: 0x71/255, green: 0x76/255, blue: 0x7B/255, alpha: 1)
+            : UIColor(red: 0x53/255, green: 0x64/255, blue: 0x71/255, alpha: 1)
+    })
     
     /// Light gray color used for ellipsis icon
     static let ellipsisIcon = Color(hex: "#B9CAD3")

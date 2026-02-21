@@ -10,20 +10,25 @@ import SwiftUI
 struct CustomActionButton: View {
     let iconName: String
     let count: Int
-    var color: Color = Color.secondaryText
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var iconColor: Color {
+        colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
+    }
     
     var body: some View {
         HStack(spacing: 5) {
             Image(iconName)
+                .renderingMode(.template)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 19, height: 19)
-                .foregroundStyle(color)
+                .foregroundStyle(iconColor)
             
             if count > 0 {
                 Text(count, format: .number.notation(.compactName))
                     .font(.chirpRegular(size: 13))
-                    .foregroundStyle(color)
+                    .foregroundStyle(iconColor)
             }
         }
     }
@@ -31,6 +36,11 @@ struct CustomActionButton: View {
 
 struct PostCell: View {
     let post: Post
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var metaColor: Color {
+        colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -56,15 +66,15 @@ struct PostCell: View {
                         }
                         HStack(spacing: 2) {
                             Text("@\(post.username)")
-                                .foregroundStyle(Color.secondaryText)
+                                .foregroundStyle(metaColor)
                                 .font(.chirpRegular(size: 15))
                                 .lineLimit(1)
                             Text("∙")
-                                .foregroundStyle(Color.secondaryText)
+                                .foregroundStyle(metaColor)
                                 .font(.chirpRegular(size: 15))
                             Text(post.timeAgo)
                                 .font(.chirpRegular(size: 13))
-                                .foregroundStyle(Color.secondaryText)
+                                .foregroundStyle(metaColor)
                         }
                         Spacer()
                     }
@@ -91,15 +101,17 @@ struct PostCell: View {
                 CustomActionButton(iconName: "icon-views", count: post.views)
                 Spacer()
                 Image("icon-bookmark")
+                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 19, height: 19)
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(metaColor)
                 Image("icon-share")
+                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 19, height: 19)
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(metaColor)
             }
             .font(.chirpRegular(size: 13))
             .padding(.leading, 54)

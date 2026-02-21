@@ -1,18 +1,17 @@
 //
-//  SettingsView.swift
+//  PremiumView.swift
 //  Xprototype
 //
 
 import SwiftUI
 
-struct SettingsView: View {
+struct PremiumView: View {
     @Binding var isShowing: Bool
     let username: String
     @Environment(\.colorScheme) private var colorScheme
     @GestureState private var dragOffset: CGFloat = 0
     @State private var isDragging = false
     
-    // Get actual device safe area from window
     private var safeAreaTop: CGFloat {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -27,8 +26,8 @@ struct SettingsView: View {
         colorScheme == .dark ? .white : Color(.label)
     }
     
-    private var searchBarBackground: Color {
-        colorScheme == .dark ? Color(hex: "#202327") : Color(.systemGray6)
+    private var sectionColor: Color {
+        colorScheme == .dark ? .white : Color(.label)
     }
     
     var body: some View {
@@ -49,7 +48,7 @@ struct SettingsView: View {
                     Spacer()
                     
                     VStack(spacing: 2) {
-                        Text("Settings")
+                        Text("Premium")
                             .font(.chirpHeavy(size: 17))
                             .foregroundStyle(textColor)
                         
@@ -71,40 +70,41 @@ struct SettingsView: View {
             .padding(.top, safeAreaTop)
             .padding(.bottom, 16)
             
-            // Search bar
-            HStack {
-                Spacer()
-                
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 16))
-                        .foregroundStyle(Color.secondaryText)
-                    
-                    Text("Search settings")
-                        .font(.chirpRegular(size: 16))
-                        .foregroundStyle(Color.secondaryText)
-                }
-                
-                Spacer()
-            }
-            .padding(.vertical, 12)
-            .background(searchBarBackground)
-            .cornerRadius(20)
-            .padding(.horizontal, 16)
-            .padding(.bottom, 16)
-            .drawingGroup()
-            
-            // Menu items
+            // Sections
             ScrollView {
-                VStack(spacing: 0) {
-                    SettingsMenuItem(icon: "icon-profile", title: "Your account")
-                    SettingsMenuItem(icon: "icon-lock", title: "Security and account access")
-                    SettingsMenuItem(icon: "icon-premium", title: "Premium")
-                    SettingsMenuItem(icon: "icon-post", title: "Timeline")
-                    SettingsMenuItem(icon: "icon-safety", title: "Privacy and safety")
-                    SettingsMenuItem(icon: "icon-bell-outline", title: "Notifications")
-                    SettingsMenuItem(icon: "icon-accessibility", title: "Accessibility, display, and languages")
-                    SettingsMenuItem(icon: "icon-resources", title: "Additional resources")
+                VStack(alignment: .leading, spacing: 0) {
+                    // Section 1: Quick access
+                    PremiumSectionHeader(title: "Quick access")
+                    
+                    PremiumMenuItem(icon: "icon-grok", title: "SuperGrok")
+                    PremiumMenuItem(icon: "icon-block", title: "Ads avoided")
+                    PremiumMenuItem(icon: "icon-radar", title: "Radar")
+                    PremiumMenuItem(icon: "icon-studio", title: "Creator Studio")
+                    PremiumMenuItem(icon: "icon-analytics", title: "Analytics")
+                    PremiumMenuItem(icon: "icon-offline", title: "Offline videos")
+                    PremiumMenuItem(icon: "icon-bookmarkfolder", title: "Bookmark Folders")
+                    
+                    // Section 2: Customization
+                    PremiumSectionHeader(title: "Customization")
+                    
+                    PremiumMenuItem(icon: "icon-at", title: "Request an inactive handle")
+                    PremiumMenuItem(icon: "icon-person", title: "Profile customization")
+                    PremiumMenuItem(icon: "icon-bio", title: "Expanded Bio")
+                    PremiumMenuItem(icon: "icon-pin", title: "Customize navigation")
+                    PremiumMenuItem(icon: "icon-smartphone", title: "App icons")
+                    PremiumMenuItem(icon: "icon-theme", title: "Theme")
+                    
+                    // Section 3: Verification & Security
+                    PremiumSectionHeader(title: "Verification & Security")
+                    
+                    PremiumMenuItem(icon: "icon-idverification", title: "ID Verification")
+                    
+                    // Section 4: Support
+                    PremiumSectionHeader(title: "Support")
+                    
+                    PremiumMenuItem(icon: "icon-help", title: "Help Center")
+                    PremiumMenuItem(icon: "icon-envelope", title: "Message @premium for support")
+                    PremiumMenuItem(icon: "icon-settings", title: "Manage your subscription")
                 }
             }
             
@@ -117,7 +117,6 @@ struct SettingsView: View {
         .simultaneousGesture(
             DragGesture()
                 .updating($dragOffset) { value, state, _ in
-                    // Only respond to swipes starting near the left edge
                     guard value.startLocation.x < 40 else { return }
                     if value.translation.width > 0 {
                         state = value.translation.width
@@ -132,7 +131,6 @@ struct SettingsView: View {
                     guard value.startLocation.x < 40 else { return }
                     isDragging = false
                     let screenWidth = UIScreen.main.bounds.width
-                    // Dismiss if dragged past 35% of screen or flicked fast enough
                     if value.translation.width > screenWidth * 0.35 || value.predictedEndTranslation.width > screenWidth * 0.5 {
                         withAnimation(.easeOut(duration: 0.25)) {
                             isShowing = false
@@ -143,8 +141,27 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Settings Menu Item
-struct SettingsMenuItem: View {
+// MARK: - Section Header
+struct PremiumSectionHeader: View {
+    let title: String
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var textColor: Color {
+        colorScheme == .dark ? .white : Color(.label)
+    }
+    
+    var body: some View {
+        Text(title)
+            .font(.chirpHeavy(size: 20))
+            .foregroundStyle(textColor)
+            .padding(.horizontal, 16)
+            .padding(.top, 24)
+            .padding(.bottom, 8)
+    }
+}
+
+// MARK: - Premium Menu Item
+struct PremiumMenuItem: View {
     let icon: String
     let title: String
     @Environment(\.colorScheme) private var colorScheme
@@ -191,5 +208,5 @@ struct SettingsMenuItem: View {
 }
 
 #Preview {
-    SettingsView(isShowing: .constant(true), username: "nicoduc")
+    PremiumView(isShowing: .constant(true), username: "nicoduc")
 }

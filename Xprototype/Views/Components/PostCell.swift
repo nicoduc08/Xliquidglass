@@ -10,11 +10,8 @@ import SwiftUI
 struct CustomActionButton: View {
     let iconName: String
     let count: Int
-    @Environment(\.colorScheme) private var colorScheme
     
-    private var iconColor: Color {
-        colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
-    }
+    private var iconColor: Color { .secondaryText }
     
     var body: some View {
         HStack(spacing: 5) {
@@ -36,11 +33,8 @@ struct CustomActionButton: View {
 
 struct PostCell: View {
     let post: Post
-    @Environment(\.colorScheme) private var colorScheme
     
-    private var metaColor: Color {
-        colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
-    }
+    private var metaColor: Color { .secondaryText }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {

@@ -11,111 +11,100 @@ struct FeedHeader: View {
     @Binding var selectedTab: Int
     let safeAreaTop: CGFloat
     var onAvatarTap: (() -> Void)? = nil
-    @Namespace private var underlineNamespace
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Avatar row (above tabs)
-            HStack(alignment: .center) {
+        HStack {
+            // Profile glass button
+            Button {
+                onAvatarTap?()
+            } label: {
                 Image("Avatar 1")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 32, height: 32)
+                    .frame(width: 30, height: 30)
                     .clipShape(Circle())
-                    .onTapGesture {
-                        onAvatarTap?()
+            }
+            .buttonStyle(GlassButtonStyle())
+            
+            Spacer()
+            
+            // Tab buttons
+            HStack(spacing: 8) {
+                ForEach(Array(["For you", "Following"].enumerated()), id: \.offset) { index, title in
+                    GlassTabButton(
+                        title: title,
+                        isSelected: selectedTab == index
+                    ) {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            selectedTab = index
+                        }
                     }
-                Spacer()
-                Image("icon-x")
+                }
+            }
+            
+            Spacer()
+            
+            // Notification glass button
+            Button {
+                // Handle notification tap
+            } label: {
+                Image("icon-bell-outline")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 24)
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(Color(.label))
-                Spacer()
-                // Invisible spacer to balance the avatar
-                Color.clear
-                    .frame(width: 32, height: 32)
             }
-            .padding(.horizontal, 12)
-            .padding(.bottom, 6)
-            
-            // Tabs
-            HStack(spacing: 0) {
-                TabButton(title: "For you", id: 0, isSelected: selectedTab == 0) {
-                    selectedTab = 0
-                }
-                
-                TabButton(title: "Following", id: 1, isSelected: selectedTab == 1) {
-                    selectedTab = 1
-                }
-                
-                TabButton(title: "Seen", id: 2, isSelected: selectedTab == 2) {
-                    selectedTab = 2
-                }
-            }
-            .padding(.horizontal)
-            .frame(height: 40)
-            .overlayPreferenceValue(TabTextBoundsKey.self) { preferences in
-                GeometryReader { proxy in
-                    if let anchor = preferences[selectedTab] {
-                        let rect = proxy[anchor]
-                        Rectangle()
-                            .fill(Color.selectedTab)
-                            .frame(width: rect.width, height: 3)
-                            .cornerRadius(1.5)
-                            .position(x: rect.midX, y: rect.maxY + 12)
-                            .animation(.easeInOut(duration: 0.25), value: selectedTab)
-                    }
-                }
-            }
-            
-            Divider()
+            .buttonStyle(GlassButtonStyle())
         }
-        .padding(.top, safeAreaTop)
-        .background(Color(.systemBackground))
+        .padding(.horizontal, 16)
+        .padding(.top, safeAreaTop + 4)
+        .padding(.bottom, 8)
+        .background(
+            LinearGradient(
+                stops: [
+                    .init(color: Color(.systemBackground), location: 0),
+                    .init(color: Color(.systemBackground), location: 0.6),
+                    .init(color: Color(.systemBackground).opacity(0), location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            // .padding(.bottom, -40)
+            .ignoresSafeArea(edges: .top)
+        )
+        .allowsHitTesting(true)
     }
 }
 
-struct TabButton: View {
+// MARK: - Glass Tab Button
+struct GlassTabButton: View {
     let title: String
-    let id: Int
     let isSelected: Bool
     let action: () -> Void
-    @Environment(\.colorScheme) private var colorScheme
-    
-    private var selectedColor: Color {
-        colorScheme == .dark ? .white : .black
-    }
-    
-    private var unselectedColor: Color {
-        colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
-    }
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
-                Text(title)
-                    .font(.chirpBold(size: 15))
-                    .foregroundStyle(isSelected ? selectedColor : unselectedColor)
-                    .fixedSize()
-                    .anchorPreference(key: TabTextBoundsKey.self, value: .bounds) { anchor in
-                        [id: anchor]
-                    }
-                
-                Color.clear
-                    .frame(height: 2)
-            }
-            .frame(maxWidth: .infinity)
+            Text(title)
+                .font(.chirpBold(size: 13))
+                .foregroundColor(isSelected ? Color(.systemBackground) : Color(.label))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
         }
-        .background(Color.clear)
-        .buttonStyle(.plain)
+        .modify { view in
+            if isSelected {
+                view.buttonStyle(GlassProminentButtonStyle())
+            } else {
+                view.buttonStyle(GlassButtonStyle())
+            }
+        }
     }
 }
 
-private struct TabTextBoundsKey: PreferenceKey {
-    static var defaultValue: [Int: Anchor<CGRect>] = [:]
-    static func reduce(value: inout [Int: Anchor<CGRect>], nextValue: () -> [Int: Anchor<CGRect>]) {
-        value.merge(nextValue(), uniquingKeysWith: { $1 })
+// MARK: - Conditional Modifier
+private extension View {
+    @ViewBuilder
+    func modify<T: View>(@ViewBuilder _ modifier: (Self) -> T) -> T {
+        modifier(self)
     }
 }

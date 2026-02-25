@@ -11,12 +11,16 @@ extension Color {
     /// Gray color used for handles, timestamps, and action bar elements
     static let secondaryText = Color(UIColor { traitCollection in
         traitCollection.userInterfaceStyle == .dark
-            ? UIColor(red: 0x71/255, green: 0x76/255, blue: 0x7B/255, alpha: 1)
-            : UIColor(red: 0x53/255, green: 0x64/255, blue: 0x71/255, alpha: 1)
+            ? UIColor(red: 0x4D/255, green: 0x4D/255, blue: 0x4D/255, alpha: 1)
+            : UIColor(red: 0x80/255, green: 0x80/255, blue: 0x80/255, alpha: 1)
     })
     
-    /// Light gray color used for ellipsis icon
-    static let ellipsisIcon = Color(hex: "#B9CAD3")
+    /// Color used for ellipsis/more icon
+    static let ellipsisIcon = Color(UIColor { traitCollection in
+        traitCollection.userInterfaceStyle == .dark
+            ? UIColor(red: 0x26/255, green: 0x26/255, blue: 0x26/255, alpha: 1)
+            : UIColor(red: 0xB2/255, green: 0xB2/255, blue: 0xB2/255, alpha: 1)
+    })
 
     /// Blue color used for selected header tab
     static let selectedTab = Color(hex: "#1D9BF0")

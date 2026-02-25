@@ -79,7 +79,7 @@ struct PremiumView: View {
                     PremiumMenuItem(icon: "icon-grok", title: "SuperGrok")
                     PremiumMenuItem(icon: "icon-block", title: "Ads avoided")
                     PremiumMenuItem(icon: "icon-radar", title: "Radar")
-                    PremiumMenuItem(icon: "icon-studio", title: "Creator Studio")
+                    PremiumMenuItem(icon: "icon-rocket", title: "Creator Studio")
                     PremiumMenuItem(icon: "icon-analytics", title: "Analytics")
                     PremiumMenuItem(icon: "icon-offline", title: "Offline videos")
                     PremiumMenuItem(icon: "icon-bookmarkfolder", title: "Bookmark Folders")

@@ -28,8 +28,8 @@ struct FeedView: View {
             .first?.windows.first?.safeAreaInsets.bottom ?? 0
     }
     
-    // Header height includes avatar row (32 + 6), tabs (44), and divider (1)
-    private let headerHeight: CGFloat = 83
+    // Header height: single row with glass buttons + padding
+    private let headerHeight: CGFloat = 52
     
     var body: some View {
         let totalHeaderHeight = safeAreaTop + headerHeight
@@ -39,7 +39,9 @@ struct FeedView: View {
                 LazyVStack(spacing: 0, pinnedViews: []) {
                     ForEach(posts) { post in
                         PostCell(post: post)
-                        Divider()
+                        Rectangle()
+                            .fill(Color(.label).opacity(0.15))
+                            .frame(height: 0.5)
                     }
                 }
             }

@@ -49,7 +49,7 @@ struct SidebarView: View {
                             SidebarMenuItem(icon: "icon-bookmarks", title: "Bookmarks")
                             SidebarMenuItem(icon: "icon-lists", title: "Lists")
                             SidebarMenuItem(icon: "icon-spaces", title: "Spaces")
-                            SidebarMenuItem(icon: "icon-studio", title: "Creator Studio")
+                            SidebarMenuItem(icon: "icon-rocket", title: "Creator Studio")
                             SidebarMenuItem(icon: "icon-conferences", title: "Conferences")
                             
                             Divider()

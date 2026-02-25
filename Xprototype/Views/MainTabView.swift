@@ -10,6 +10,7 @@ import SwiftUI
 import UIKit
 
 struct MainTabView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab = 0
     @State private var isSidebarShowing = false
     @State private var isSettingsShowing = false
@@ -48,6 +49,7 @@ struct MainTabView: View {
                     .tabItem { tabIcon("icon-message", title: "", tag: 4) }
                     .tag(4)
             }
+            .tint(colorScheme == .dark ? .white : .black)
             .offset(x: isSidebarShowing ? sidebarWidth : 0)
             .animation(.easeOut(duration: 0.25), value: isSidebarShowing)
             .onAppear {
@@ -56,6 +58,7 @@ struct MainTabView: View {
                 appearance.configureWithOpaqueBackground()
                 UITabBar.appearance().standardAppearance = appearance
                 UITabBar.appearance().scrollEdgeAppearance = appearance
+                UITabBar.appearance().tintColor = .label
             }
             
             // Sidebar overlay

@@ -44,6 +44,7 @@ struct FeedView: View {
                             .frame(height: 0.5)
                     }
                 }
+                .offset(y: -safeAreaTop - 20)
             }
             
             // Header

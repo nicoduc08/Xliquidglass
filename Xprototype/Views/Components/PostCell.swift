@@ -87,19 +87,38 @@ struct PostCell: View {
                 .padding(.leading, 54)
                 .padding(.top, -24)
             
+            // Post image
+            if let imageName = post.imageName {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color(.label).opacity(0.15), lineWidth: 0.5)
+                    )
+                    .padding(.leading, 54)
+                    .padding(.top, 12)
+            }
+            
             // Action bar – no interaction, no isLiked needed
-            HStack(spacing: 10) {
+            HStack(spacing: 0) {
                 CustomActionButton(iconName: "icon-reply", count: post.replies)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 CustomActionButton(iconName: "icon-repost", count: post.reposts)
-                CustomActionButton(iconName: "icon-like", count: post.likes)                 
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                CustomActionButton(iconName: "icon-like", count: post.likes)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 CustomActionButton(iconName: "icon-views", count: post.views)
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Image("icon-bookmark")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 19, height: 19)
                     .foregroundStyle(metaColor)
+                    .padding(.trailing, 12)
                 Image("icon-share")
                     .renderingMode(.template)
                     .resizable()
@@ -111,7 +130,8 @@ struct PostCell: View {
             .padding(.leading, 54)
             .padding(.top, 16)
         }
-        .padding()
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .background(Color(.systemBackground))
     }
 }

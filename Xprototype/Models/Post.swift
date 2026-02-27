@@ -15,6 +15,7 @@ struct Post: Identifiable {
     let timestamp: Date
     let isVerified: Bool
     let avatarName: String
+    let imageName: String?
     
     let replies: Int
     let reposts: Int
@@ -44,7 +45,8 @@ extension Post {
             content: "A good laugh and a long, rejuvenating sleep are two of the most potent remedies for a wide array of ailments...",
             timestamp: Date().addingTimeInterval(-3*3600),
             isVerified: true,
-            avatarName: "Avatar 1",
+            avatarName: "Avatar 12",
+            imageName: nil,
             replies: 732, reposts: 454, likes: 1200, views: 10000
         ),
         Post(
@@ -60,6 +62,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-3600),
             isVerified: true,
             avatarName: "Avatar 2",
+            imageName: nil,
             replies: 89, reposts: 210, likes: 1800, views: 45000
         ),
         Post(
@@ -69,6 +72,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-2*3600),
             isVerified: false,
             avatarName: "Avatar 3",
+            imageName: "LA",
             replies: 45, reposts: 12, likes: 234, views: 3200
         ),
         Post(
@@ -78,6 +82,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-4*3600),
             isVerified: true,
             avatarName: "Avatar 4",
+            imageName: nil,
             replies: 1200, reposts: 890, likes: 5600, views: 125000
         ),
         Post(
@@ -87,6 +92,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-5*3600),
             isVerified: false,
             avatarName: "Avatar 5",
+            imageName: nil,
             replies: 23, reposts: 8, likes: 156, views: 2100
         ),
         Post(
@@ -96,6 +102,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-6*3600),
             isVerified: false,
             avatarName: "Avatar 6",
+            imageName: "rocket",
             replies: 67, reposts: 34, likes: 412, views: 5800
         ),
         Post(
@@ -105,6 +112,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-7*3600),
             isVerified: false,
             avatarName: "Avatar 7",
+            imageName: nil,
             replies: 12, reposts: 5, likes: 89, views: 1500
         ),
         Post(
@@ -114,6 +122,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-8*3600),
             isVerified: true,
             avatarName: "Avatar 8",
+            imageName: nil,
             replies: 234, reposts: 156, likes: 890, views: 12000
         ),
         Post(
@@ -123,6 +132,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-9*3600),
             isVerified: false,
             avatarName: "Avatar 9",
+            imageName: "book",
             replies: 89, reposts: 45, likes: 567, views: 8900
         ),
         Post(
@@ -132,6 +142,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-10*3600),
             isVerified: false,
             avatarName: "Avatar 10",
+            imageName: nil,
             replies: 156, reposts: 23, likes: 345, views: 4500
         ),
         Post(
@@ -141,6 +152,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-11*3600),
             isVerified: true,
             avatarName: "Avatar 11",
+            imageName: nil,
             replies: 78, reposts: 67, likes: 456, views: 6700
         ),
         Post(
@@ -150,6 +162,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-12*3600),
             isVerified: false,
             avatarName: "Avatar 12",
+            imageName: "steve",
             replies: 234, reposts: 189, likes: 1234, views: 15600
         ),
         Post(
@@ -159,6 +172,7 @@ extension Post {
             timestamp: Date().addingTimeInterval(-13*3600),
             isVerified: true,
             avatarName: "Avatar 13",
+            imageName: nil,
             replies: 345, reposts: 234, likes: 1789, views: 23400
         )
     ]

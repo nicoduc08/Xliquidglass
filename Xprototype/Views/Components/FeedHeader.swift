@@ -70,7 +70,6 @@ struct FeedHeader: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            // .padding(.bottom, -40)
             .ignoresSafeArea(edges: .top)
         )
         .allowsHitTesting(true)

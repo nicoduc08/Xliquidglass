@@ -52,8 +52,9 @@ struct ScrollViewWithHeader<Content: View>: UIViewRepresentable {
     func updateUIView(_ uiView: UIScrollView, context: Context) {
         context.coordinator.hostingController?.rootView = content
         
-        // Set fixed content inset for header and tab bar space
-        let topInset = safeAreaTop + headerHeight
+        // Set fixed content inset for header only
+        // (hosting controller handles safeAreaTop internally)
+        let topInset = headerHeight
         let bottomInset = safeAreaBottom
         if uiView.contentInset.top != topInset || uiView.contentInset.bottom != bottomInset {
             uiView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: bottomInset, right: 0)

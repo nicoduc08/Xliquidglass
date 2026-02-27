@@ -10,6 +10,7 @@ import SwiftUI
 
 struct FeedView: View {
     @Binding var isSidebarShowing: Bool
+    @Namespace private var postTransition
     
     private let posts = Post.mock
     @State private var selectedTab = 0
@@ -38,7 +39,19 @@ struct FeedView: View {
             ScrollViewWithHeader(headerOffset: $headerOffset, safeAreaTop: safeAreaTop, safeAreaBottom: safeAreaBottom, headerHeight: headerHeight) {
                 LazyVStack(spacing: 0, pinnedViews: []) {
                     ForEach(posts) { post in
-                        PostCell(post: post)
+                        NavigationLink {
+                            PostDetailView(post: post)
+                                .navigationTransition(.zoom(sourceID: post.id, in: postTransition))
+                        } label: {
+                            PostCell(post: post)
+                                .matchedTransitionSource(id: post.id, in: postTransition) { source in
+                                    source
+                                        .background(Color(.systemBackground))
+                                        .clipShape(RoundedRectangle(cornerRadius: 0))
+                                        .shadow(color: .clear, radius: 0)
+                                }
+                        }
+                        .buttonStyle(.plain)
                         Rectangle()
                             .fill(Color(.label).opacity(0.15))
                             .frame(height: 0.5)

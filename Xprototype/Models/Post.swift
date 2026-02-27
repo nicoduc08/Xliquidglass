@@ -21,6 +21,7 @@ struct Post: Identifiable {
     let reposts: Int
     let likes: Int
     let views: Int
+    let bookmarks: Int
     
     var timeAgo: String {
         let interval = Date().timeIntervalSince(timestamp)
@@ -47,7 +48,7 @@ extension Post {
             isVerified: true,
             avatarName: "Avatar 12",
             imageName: nil,
-            replies: 732, reposts: 454, likes: 1200, views: 10000
+            replies: 732, reposts: 454, likes: 1200, views: 10000, bookmarks: 89
         ),
         Post(
             authorName: "StripMallGuy",
@@ -63,7 +64,7 @@ extension Post {
             isVerified: true,
             avatarName: "Avatar 2",
             imageName: nil,
-            replies: 89, reposts: 210, likes: 1800, views: 45000
+            replies: 89, reposts: 210, likes: 1800, views: 45000, bookmarks: 312
         ),
         Post(
             authorName: "Sarah Chen",
@@ -73,7 +74,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 3",
             imageName: "LA",
-            replies: 45, reposts: 12, likes: 234, views: 3200
+            replies: 45, reposts: 12, likes: 234, views: 3200, bookmarks: 18
         ),
         Post(
             authorName: "Tech News",
@@ -83,7 +84,7 @@ extension Post {
             isVerified: true,
             avatarName: "Avatar 4",
             imageName: nil,
-            replies: 1200, reposts: 890, likes: 5600, views: 125000
+            replies: 1200, reposts: 890, likes: 5600, views: 125000, bookmarks: 1450
         ),
         Post(
             authorName: "Alex Rivera",
@@ -93,7 +94,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 5",
             imageName: nil,
-            replies: 23, reposts: 8, likes: 156, views: 2100
+            replies: 23, reposts: 8, likes: 156, views: 2100, bookmarks: 34
         ),
         Post(
             authorName: "Coffee Lover",
@@ -103,7 +104,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 6",
             imageName: "rocket",
-            replies: 67, reposts: 34, likes: 412, views: 5800
+            replies: 67, reposts: 34, likes: 412, views: 5800, bookmarks: 56
         ),
         Post(
             authorName: "Maya Patel",
@@ -113,7 +114,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 7",
             imageName: nil,
-            replies: 12, reposts: 5, likes: 89, views: 1500
+            replies: 12, reposts: 5, likes: 89, views: 1500, bookmarks: 11
         ),
         Post(
             authorName: "Startup Founder",
@@ -123,7 +124,7 @@ extension Post {
             isVerified: true,
             avatarName: "Avatar 8",
             imageName: nil,
-            replies: 234, reposts: 156, likes: 890, views: 12000
+            replies: 234, reposts: 156, likes: 890, views: 12000, bookmarks: 178
         ),
         Post(
             authorName: "Nature Photographer",
@@ -133,7 +134,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 9",
             imageName: "book",
-            replies: 89, reposts: 45, likes: 567, views: 8900
+            replies: 89, reposts: 45, likes: 567, views: 8900, bookmarks: 93
         ),
         Post(
             authorName: "Bookworm",
@@ -143,7 +144,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 10",
             imageName: nil,
-            replies: 156, reposts: 23, likes: 345, views: 4500
+            replies: 156, reposts: 23, likes: 345, views: 4500, bookmarks: 67
         ),
         Post(
             authorName: "Fitness Coach",
@@ -153,7 +154,7 @@ extension Post {
             isVerified: true,
             avatarName: "Avatar 11",
             imageName: nil,
-            replies: 78, reposts: 67, likes: 456, views: 6700
+            replies: 78, reposts: 67, likes: 456, views: 6700, bookmarks: 42
         ),
         Post(
             authorName: "Music Producer",
@@ -163,7 +164,7 @@ extension Post {
             isVerified: false,
             avatarName: "Avatar 12",
             imageName: "steve",
-            replies: 234, reposts: 189, likes: 1234, views: 15600
+            replies: 234, reposts: 189, likes: 1234, views: 15600, bookmarks: 205
         ),
         Post(
             authorName: "Travel Blogger",
@@ -173,7 +174,7 @@ extension Post {
             isVerified: true,
             avatarName: "Avatar 13",
             imageName: nil,
-            replies: 345, reposts: 234, likes: 1789, views: 23400
+            replies: 345, reposts: 234, likes: 1789, views: 23400, bookmarks: 456
         )
     ]
 }

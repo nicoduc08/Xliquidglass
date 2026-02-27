@@ -10,6 +10,8 @@ import SwiftUI
 struct CustomActionButton: View {
     let iconName: String
     let count: Int
+    var iconSize: CGFloat = 19
+    var fontSize: CGFloat = 13
     
     private var iconColor: Color { .secondaryText }
     
@@ -19,12 +21,12 @@ struct CustomActionButton: View {
                 .renderingMode(.template)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 19, height: 19)
+                .frame(width: iconSize, height: iconSize)
                 .foregroundStyle(iconColor)
             
             if count > 0 {
                 Text(count, format: .number.notation(.compactName))
-                    .font(.chirpRegular(size: 13))
+                    .font(.chirpRegular(size: fontSize))
                     .foregroundStyle(iconColor)
             }
         }

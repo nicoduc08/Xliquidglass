@@ -11,6 +11,7 @@ struct FeedHeader: View {
     @Binding var selectedTab: Int
     let safeAreaTop: CGFloat
     var onAvatarTap: (() -> Void)? = nil
+    var onBellTap: (() -> Void)? = nil
     
     var body: some View {
         HStack {
@@ -46,9 +47,9 @@ struct FeedHeader: View {
             
             // Notification glass button
             Button {
-                // Handle notification tap
+                onBellTap?()
             } label: {
-                Image("icon-bell-outline")
+                Image("icon-filter")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()

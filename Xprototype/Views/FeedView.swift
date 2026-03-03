@@ -11,11 +11,15 @@ import SwiftUI
 struct FeedView: View {
     @Binding var isSidebarShowing: Bool
     @Binding var isTopicSheetShowing: Bool
+    @Binding var pinnedTopics: [String]
+    @Binding var selectedTab: Int
     @Namespace private var postTransition
     
     private let posts = Post.mock
-    @State private var selectedTab = 0
     @State private var headerOffset: CGFloat = 0
+    @State private var isLoadingTimeline = false
+    @State private var displayedPosts: [Post] = Post.mock
+    @State private var lastSelectedTab = 0
     
     // Get actual device safe area from window
     private var safeAreaTop: CGFloat {
@@ -30,8 +34,8 @@ struct FeedView: View {
             .first?.windows.first?.safeAreaInsets.bottom ?? 0
     }
     
-    // Header height: single row with glass buttons + padding
-    private let headerHeight: CGFloat = 52
+    // Header height: avatar row + tab row + divider
+    private let headerHeight: CGFloat = 80
     
     var body: some View {
         let totalHeaderHeight = safeAreaTop + headerHeight
@@ -39,7 +43,7 @@ struct FeedView: View {
         ZStack(alignment: .top) {
             ScrollViewWithHeader(headerOffset: $headerOffset, safeAreaTop: safeAreaTop, safeAreaBottom: safeAreaBottom, headerHeight: headerHeight) {
                 LazyVStack(spacing: 0, pinnedViews: []) {
-                    ForEach(posts) { post in
+                    ForEach(displayedPosts) { post in
                         NavigationLink {
                             PostDetailView(post: post)
                                 .navigationTransition(.zoom(sourceID: post.id, in: postTransition))
@@ -59,12 +63,27 @@ struct FeedView: View {
                     }
                 }
                 .offset(y: -safeAreaTop - 20)
+                .opacity(isLoadingTimeline ? 0 : 1)
+            }
+            
+            // Loading spinner
+            if isLoadingTimeline {
+                VStack {
+                    Spacer()
+                    ProgressView()
+                        .scaleEffect(1.2)
+                        .tint(Color(.label))
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+                .ignoresSafeArea()
             }
             
             // Header
             FeedHeader(
                 selectedTab: $selectedTab,
                 safeAreaTop: safeAreaTop,
+                pinnedTopics: $pinnedTopics,
                 onAvatarTap: {
                     withAnimation(.easeOut(duration: 0.25)) {
                         isSidebarShowing = true
@@ -83,6 +102,32 @@ struct FeedView: View {
         .background(Color(.systemBackground))
         .ignoresSafeArea(edges: [.top, .bottom])
         .navigationBarHidden(true)
+        .onChange(of: selectedTab) { oldValue, newValue in
+            // Only trigger loading for pinned tabs or when switching between different tabs
+            if newValue != oldValue {
+                if newValue >= 100 {
+                    // Pinned tab: show spinner and load shuffled posts
+                    isLoadingTimeline = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            displayedPosts = posts.shuffled()
+                            isLoadingTimeline = false
+                        }
+                    }
+                } else {
+                    // Standard tab: restore original posts
+                    if oldValue >= 100 {
+                        isLoadingTimeline = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                displayedPosts = posts
+                                isLoadingTimeline = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
         .simultaneousGesture(
             DragGesture()
                 .onEnded { value in
@@ -116,6 +161,8 @@ struct TopicItem: Identifiable, Equatable {
 // MARK: - Topic Bottom Sheet
 struct TopicBottomSheet: View {
     @Binding var isShowing: Bool
+    @Binding var pinnedTopics: [String]
+    @Binding var feedSelectedTab: Int
     
     @State private var seeMoreTopics: [TopicItem] = [
         TopicItem(icon: "icon-politics", title: "Politics"),
@@ -233,8 +280,18 @@ struct TopicBottomSheet: View {
                             let rect = proxy[anchor]
                             VStack(alignment: .leading, spacing: 0) {
                                 tooltipButton(icon: "icon-pin", label: "Pin to timeline") {
+                                    let topicTitle = topic.title
                                     withAnimation(.spring(duration: 0.15)) { tooltipVisible = false }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { selectedTopic = nil }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                        selectedTopic = nil
+                                        if !pinnedTopics.contains(topicTitle) {
+                                            pinnedTopics.append(topicTitle)
+                                        }
+                                        // Select the new pinned tab (id = 100 + index)
+                                        let tabIndex = pinnedTopics.firstIndex(of: topicTitle) ?? 0
+                                        feedSelectedTab = 100 + tabIndex
+                                        isShowing = false
+                                    }
                                 }
                                 Divider().padding(.horizontal, 12)
                                 tooltipButton(icon: "icon-arrow-down", label: "Move to see less") {
@@ -356,6 +413,6 @@ struct TopicBottomSheet: View {
 
 #Preview {
     NavigationStack {
-        FeedView(isSidebarShowing: .constant(false), isTopicSheetShowing: .constant(false))
+        FeedView(isSidebarShowing: .constant(false), isTopicSheetShowing: .constant(false), pinnedTopics: .constant([]), selectedTab: .constant(0))
     }
 }

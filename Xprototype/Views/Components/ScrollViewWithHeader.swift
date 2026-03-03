@@ -125,4 +125,3 @@ struct ScrollViewWithHeader<Content: View>: UIViewRepresentable {
         }
     }
 }
-

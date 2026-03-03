@@ -16,6 +16,8 @@ struct MainTabView: View {
     @State private var isSettingsShowing = false
     @State private var isPremiumShowing = false
     @State private var isTopicSheetShowing = false
+    @State private var pinnedTopics: [String] = []
+    @State private var feedSelectedTab = 0
     
     // Sidebar width for content offset
     private var sidebarWidth: CGFloat {
@@ -30,7 +32,7 @@ struct MainTabView: View {
         ZStack {
             // Main tab content
             TabView(selection: $selectedTab) {
-                NavigationStack { FeedView(isSidebarShowing: $isSidebarShowing, isTopicSheetShowing: $isTopicSheetShowing) }
+                NavigationStack { FeedView(isSidebarShowing: $isSidebarShowing, isTopicSheetShowing: $isTopicSheetShowing, pinnedTopics: $pinnedTopics, selectedTab: $feedSelectedTab) }
                     .tabItem { tabIcon("icon-home", title: "", tag: 0) }
                     .tag(0)
                 
@@ -81,7 +83,7 @@ struct MainTabView: View {
             }
             
             // Topic bottom sheet - covers tab bar
-            TopicBottomSheet(isShowing: $isTopicSheetShowing)
+            TopicBottomSheet(isShowing: $isTopicSheetShowing, pinnedTopics: $pinnedTopics, feedSelectedTab: $feedSelectedTab)
                 .zIndex(4)
         }
     }

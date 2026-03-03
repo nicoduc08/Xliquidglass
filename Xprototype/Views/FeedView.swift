@@ -347,10 +347,10 @@ struct TopicBottomSheet: View {
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 18, height: 18)
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(Color(.label))
                 Text(label)
-                    .font(.chirpMedium(size: 15))
+                    .font(.chirpMedium(size: 16))
                     .foregroundStyle(Color(.label))
             }
             .padding(.horizontal, 16)

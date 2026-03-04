@@ -228,7 +228,7 @@ struct TopicBottomSheet: View {
                                     isShowing = false
                                 } label: {
                                     Text("Apply")
-                                        .font(.chirpBold(size: 15))
+                                        .font(.chirpMedium(size: 15))
                                         .foregroundStyle(Color(.label))
                                 }
                             }
@@ -375,7 +375,7 @@ struct TopicBottomSheet: View {
             
             Spacer()
             
-            Image(isSeeMore ? "icon-more" : "icon-exclude")
+            Image(isSeeMore ? (pinnedTopics.contains(topic.title) ? "icon-pin" : "icon-more") : "icon-exclude")
                 .renderingMode(.template)
                 .resizable()
                 .scaledToFit()
@@ -387,7 +387,19 @@ struct TopicBottomSheet: View {
         .contentShape(Rectangle())
         .onTapGesture {
             if isSeeMore {
-                if selectedTopic == topic {
+                if pinnedTopics.contains(topic.title) {
+                    // Tapping a pinned topic: unpin it and dismiss the sheet
+                    if let pinIndex = pinnedTopics.firstIndex(of: topic.title) {
+                        let removedTabId = 100 + pinIndex
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            pinnedTopics.remove(at: pinIndex)
+                        }
+                        if feedSelectedTab == removedTabId {
+                            feedSelectedTab = 0
+                        }
+                    }
+                    isShowing = false
+                } else if selectedTopic == topic {
                     withAnimation(.spring(duration: 0.15)) { tooltipVisible = false }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { selectedTopic = nil }
                 } else {

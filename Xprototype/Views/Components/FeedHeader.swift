@@ -136,16 +136,29 @@ struct TabButton: View {
         colorScheme == .dark ? Color(hex: "#71767B") : Color(hex: "#536471")
     }
     
+    private var isPinned: Bool { id >= 100 }
+    
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
-                Text(title)
-                    .font(.chirpBold(size: 15))
-                    .foregroundStyle(isSelected ? selectedColor : unselectedColor)
-                    .fixedSize()
-                    .anchorPreference(key: TabTextBoundsKey.self, value: .bounds) { anchor in
-                        [id: anchor]
+                HStack(spacing: 2) {
+                    Text(title)
+                        .font(.chirpBold(size: 15))
+                        .foregroundStyle(isSelected ? selectedColor : unselectedColor)
+                        .fixedSize()
+                    
+                    if isPinned {
+                        Image("icon-chevron-small")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(Color(.label).opacity(0.4))
                     }
+                }
+                .anchorPreference(key: TabTextBoundsKey.self, value: .bounds) { anchor in
+                    [id: anchor]
+                }
                 
                 Color.clear
                     .frame(height: 2)

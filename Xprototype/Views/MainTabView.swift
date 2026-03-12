@@ -15,9 +15,9 @@ struct MainTabView: View {
     @State private var isSidebarShowing = false
     @State private var isSettingsShowing = false
     @State private var isPremiumShowing = false
-    @State private var isTopicSheetShowing = false
-    @State private var pinnedTopics: [String] = []
-    @State private var feedSelectedTab = 0
+    @State private var isComposerShowing = false
+    @State private var lastSelectedTab = 0
+    @State private var isInDetailView = false
     
     // Sidebar width for content offset
     private var sidebarWidth: CGFloat {
@@ -33,32 +33,47 @@ struct MainTabView: View {
         ZStack {
             // Main tab content
             TabView(selection: $selectedTab) {
-                NavigationStack { FeedView(isSidebarShowing: $isSidebarShowing, isTopicSheetShowing: $isTopicSheetShowing, pinnedTopics: $pinnedTopics, selectedTab: $feedSelectedTab) }
-                    .tabItem { tabIcon("icon-home", title: "", tag: 0) }
-                    .tag(0)
-                
-                NavigationStack { ExploreView() }
-                    .tabItem { tabIcon("icon-explore", title: "", tag: 1) }
-                    .tag(1)
-                
-                NavigationStack { NotificationsView() }
-                    .tabItem { tabIcon("icon-bell", title: "", tag: 2) }
-                    .tag(2)
-                
-                NavigationStack { GrokView() }
-                    .tabItem { tabIcon("icon-grok", title: "", tag: 3) }
-                    .tag(3)
-                
-                NavigationStack { MessagesView() }
-                    .tabItem { tabIcon("icon-message", title: "", tag: 4) }
-                    .tag(4)
+                Tab(value: 0) {
+                    FeedView(isSidebarShowing: $isSidebarShowing, isInDetailView: $isInDetailView)
+                } label: {
+                    tabIcon("icon-home", title: "", tag: 0)
+                }
+
+                Tab(value: 1) {
+                    NavigationStack { ExploreView() }
+                } label: {
+                    tabIcon("icon-explore", title: "", tag: 1)
+                }
+
+                Tab(value: 2) {
+                    NavigationStack { NotificationsView() }
+                } label: {
+                    tabIcon("icon-bell", title: "", tag: 2)
+                }
+
+                Tab(value: 3) {
+                    NavigationStack { MessagesView() }
+                } label: {
+                    tabIcon("icon-message", title: "", tag: 3)
+                }
+
+                Tab("New post", systemImage: "plus", value: 4, role: .search) {
+                    Color.clear
+                }
             }
+            .tabBarMinimizeBehavior(isInDetailView ? .never : .onScrollDown)
             .tint(colorScheme == .dark ? .white : .black)
             .offset(x: isSidebarShowing ? sidebarWidth : 0)
             .animation(.easeOut(duration: 0.25), value: isSidebarShowing)
-            .sheet(isPresented: $isTopicSheetShowing) {
-                TopicSheetContent(pinnedTopics: $pinnedTopics, feedSelectedTab: $feedSelectedTab)
-                    .presentationDetents([.fraction(0.7)])
+
+            .fullScreenCover(isPresented: $isComposerShowing) {
+                ComposerView()
+            }
+            .onChange(of: selectedTab) { oldValue, newValue in
+                if newValue == 4 {
+                    selectedTab = oldValue
+                    isComposerShowing = true
+                }
             }
             .onAppear {
                 // Configure tab bar appearance for proper dark mode support
@@ -83,8 +98,6 @@ struct MainTabView: View {
                 PremiumView(isShowing: $isPremiumShowing, username: User.current.username)
                     .transition(.move(edge: .trailing))
             }
-            
-
         }
     }
     
@@ -242,6 +255,134 @@ struct TopicSheetContent: View {
                 removedTopics.append(topic)
             }
         }
+    }
+}
+
+// MARK: - Composer View
+struct ComposerView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var postText = ""
+    @FocusState private var isTextFieldFocused: Bool
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Top bar: Cancel | Drafts | Post
+            HStack {
+                Button("Cancel") {
+                    dismiss()
+                }
+                .font(.chirpRegular(size: 17))
+                .foregroundStyle(Color(.label))
+
+                Spacer()
+
+                Button("Drafts") { }
+                    .font(.chirpBold(size: 15))
+                    .foregroundStyle(Color(hex: "#1D9BF0"))
+                    .padding(.trailing, 12)
+
+                Button {
+                    // Post action
+                } label: {
+                    Text("Post")
+                        .font(.chirpBold(size: 15))
+                        .foregroundStyle(.white.opacity(postText.isEmpty ? 0.5 : 1))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule().fill(postText.isEmpty ? Color(hex: "#1D9BF0").opacity(0.5) : Color(hex: "#1D9BF0"))
+                        )
+                }
+                .disabled(postText.isEmpty)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+
+            // Avatar + audience + text editor
+            HStack(alignment: .top, spacing: 12) {
+                Image("Avatar 1")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 8) {
+                    // Audience picker
+                    Button {
+                        // Audience picker action
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("Everyone")
+                                .font(.chirpMedium(size: 15))
+                                .foregroundStyle(Color(hex: "#1D9BF0"))
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(Color(hex: "#1D9BF0"))
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .overlay(
+                            Capsule().stroke(Color(.label).opacity(0.1), lineWidth: 1)
+                        )
+                    }
+
+                    // Text input
+                    TextField("What's happening?", text: $postText, axis: .vertical)
+                        .font(.chirpRegular(size: 18))
+                        .foregroundStyle(Color(.label))
+                        .focused($isTextFieldFocused)
+                        .lineLimit(1...20)
+                }
+            }
+            .padding(.horizontal, 16)
+
+            Spacer()
+
+            // Reply settings
+            HStack(spacing: 6) {
+                Image("icon-globe")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
+                    .foregroundStyle(Color(hex: "#1D9BF0"))
+                Text("Everyone can reply")
+                    .font(.chirpRegular(size: 14))
+                    .foregroundStyle(Color(hex: "#1D9BF0"))
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 12)
+
+            Divider()
+
+            // Media toolbar
+            HStack(spacing: 20) {
+                composerIcon("icon-photo")
+                composerIcon("icon-camera")
+                composerIcon("icon-grok")
+                composerIcon("icon-live")
+                composerIcon("icon-bulleted list")
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+        }
+        .background(Color(.systemBackground))
+        .onAppear {
+            isTextFieldFocused = true
+        }
+    }
+
+    @ViewBuilder
+    private func composerIcon(_ name: String) -> some View {
+        Image(name)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 24, height: 24)
+            .foregroundStyle(Color(hex: "#1D9BF0"))
     }
 }
 

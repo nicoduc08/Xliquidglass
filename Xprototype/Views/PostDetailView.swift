@@ -14,34 +14,15 @@ struct PostDetailView: View {
     private var metaColor: Color { .secondaryText }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                // Custom header bar
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "arrow.left")
-                            .font(.system(size: 17, weight: .medium))
-                            .foregroundStyle(Color(.label))
-                    }
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Anchor for scroll-to-top (expands tab bar)
+                    Color.clear
+                        .frame(height: 0)
+                        .id("top")
                     
-                    Spacer()
-                    
-                    Text("Post")
-                        .font(.chirpBold(size: 17))
-                    
-                    Spacer()
-                    
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(Color(.label))
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .padding(.bottom, 12)
-                
-                // Author row
+                    // Author row
                 HStack(spacing: 10) {
                     Image(post.avatarName)
                         .resizable()
@@ -165,7 +146,40 @@ struct PostDetailView: View {
             isReplyFocused = false
         }
         .background(Color(.systemBackground))
-        .navigationBarHidden(true)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(Color(.label))
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text("Post")
+                    .font(.chirpBold(size: 17))
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    // More options
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(Color(.label))
+                }
+            }
+        }
+        .tabBarMinimizeBehavior(.never)
+        .onAppear {
+            // Scroll to top with animation to trigger tab bar expansion
+            withAnimation {
+                proxy.scrollTo("top", anchor: .top)
+            }
+        }
         .safeAreaInset(edge: .bottom) {
             // Reply input bar
             HStack(spacing: 12) {
@@ -201,6 +215,7 @@ struct PostDetailView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
         }
+        } // ScrollViewReader
     }
     
     // MARK: - Mock Replies

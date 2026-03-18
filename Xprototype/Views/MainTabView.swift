@@ -18,6 +18,7 @@ struct MainTabView: View {
     @State private var isComposerShowing = false
     @State private var lastSelectedTab = 0
     @State private var isInDetailView = false
+    @State private var sidebarDragOffset: CGFloat = 0
     
     // Sidebar width for content offset
     private var sidebarWidth: CGFloat {
@@ -31,10 +32,13 @@ struct MainTabView: View {
     
     var body: some View {
         ZStack {
+            // Sidebar (undern eath main content)
+            SidebarView(isShowing: $isSidebarShowing, isSettingsShowing: $isSettingsShowing, isPremiumShowing: $isPremiumShowing, user: .current, dragOffset: sidebarDragOffset)
+            
             // Main tab content
             TabView(selection: $selectedTab) {
                 Tab(value: 0) {
-                    FeedView(isSidebarShowing: $isSidebarShowing, isInDetailView: $isInDetailView)
+                    FeedView(isSidebarShowing: $isSidebarShowing, isInDetailView: $isInDetailView, isDraggingSidebar: sidebarDragOffset > 10)
                 } label: {
                     tabIcon("icon-home", title: "", tag: 0)
                 }
@@ -61,19 +65,83 @@ struct MainTabView: View {
                     Color.clear
                 }
             }
-            .tabBarMinimizeBehavior(isInDetailView ? .never : .onScrollDown)
-            .tint(colorScheme == .dark ? .white : .black)
-            .offset(x: isSidebarShowing ? sidebarWidth : 0)
-            .animation(.easeOut(duration: 0.25), value: isSidebarShowing)
-
-            .fullScreenCover(isPresented: $isComposerShowing) {
-                ComposerView()
-            }
             .onChange(of: selectedTab) { oldValue, newValue in
                 if newValue == 4 {
-                    selectedTab = oldValue
+                    // Immediately reset to previous tab and show composer
+                    withTransaction(Transaction(animation: nil)) {
+                        selectedTab = oldValue
+                    }
                     isComposerShowing = true
                 }
+            }
+            .tabBarMinimizeBehavior(isInDetailView ? .never : .onScrollDown)
+            .tint(colorScheme == .dark ? .white : .black)
+            .overlay {
+                Color(UIColor { $0.userInterfaceStyle == .dark ? .black : .white })
+                    .opacity(isSidebarShowing ? 0.4 : 0.4 * max(0, (sidebarDragOffset / sidebarWidth - 0.7) / 0.3))
+                    .ignoresSafeArea()
+                    .allowsHitTesting(isSidebarShowing || sidebarDragOffset > 0)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                            isSidebarShowing = false
+                        }
+                    }
+            }
+            .shadow(color: Color(.label).opacity(isSidebarShowing || sidebarDragOffset > 0 ? (colorScheme == .dark ? 0 : 0.10) : 0), radius: 8, x: -3)
+            .offset(x: isSidebarShowing ? sidebarWidth : sidebarDragOffset)
+            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: isSidebarShowing)
+            .simultaneousGesture(
+                DragGesture()
+                    .onChanged { value in
+                        // Disable sidebar drag in detail view
+                        guard !isInDetailView else { return }
+                        // Require very strong horizontal intent (3x more horizontal than vertical)
+                        let horizontal = abs(value.translation.width)
+                        let vertical = abs(value.translation.height)
+                        guard horizontal > vertical * 3 else { return }
+                        // Minimum 30pt before activating
+                        guard horizontal > 30 else { return }
+                        
+                        if !isSidebarShowing {
+                            guard value.translation.width > 0 else { return }
+                            let drag = min(max(value.translation.width - 30, 0), sidebarWidth)
+                            sidebarDragOffset = drag
+                        } else {
+                            guard value.translation.width < 0 else { return }
+                            let drag = max(value.translation.width, -sidebarWidth)
+                            sidebarDragOffset = drag
+                        }
+                    }
+                    .onEnded { value in
+                        guard !isInDetailView else { return }
+                        if !isSidebarShowing {
+                            if sidebarDragOffset > sidebarWidth * 0.35 || value.predictedEndTranslation.width > sidebarWidth * 0.5 {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                                    isSidebarShowing = true
+                                    sidebarDragOffset = 0
+                                }
+                            } else {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.9)) {
+                                    sidebarDragOffset = 0
+                                }
+                            }
+                        } else {
+                            if sidebarDragOffset < -sidebarWidth * 0.35 || value.predictedEndTranslation.width < -sidebarWidth * 0.3 {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                                    isSidebarShowing = false
+                                    sidebarDragOffset = 0
+                                }
+                            } else {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.9)) {
+                                    sidebarDragOffset = 0
+                                }
+                            }
+                        }
+                    }
+            )
+            .onChange(of: isSidebarShowing) { _, isOpen in
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
             }
             .onAppear {
                 // Configure tab bar appearance for proper dark mode support
@@ -83,10 +151,6 @@ struct MainTabView: View {
                 UITabBar.appearance().scrollEdgeAppearance = appearance
                 UITabBar.appearance().tintColor = .label
             }
-            
-            // Sidebar overlay
-            SidebarView(isShowing: $isSidebarShowing, isSettingsShowing: $isSettingsShowing, isPremiumShowing: $isPremiumShowing, user: .current)
-            
             // Settings screen - slides in from right
             if isSettingsShowing {
                 SettingsView(isShowing: $isSettingsShowing, username: User.current.username)
@@ -98,6 +162,10 @@ struct MainTabView: View {
                 PremiumView(isShowing: $isPremiumShowing, username: User.current.username)
                     .transition(.move(edge: .trailing))
             }
+            
+        }
+        .fullScreenCover(isPresented: $isComposerShowing) {
+            ComposerView()
         }
     }
     
@@ -295,7 +363,8 @@ struct ComposerView: View {
                 }
                 .disabled(postText.isEmpty)
             }
-            .padding(.horizontal, 16)
+            .padding(.leading, 32)
+            .padding(.trailing, 32)
             .padding(.top, 16)
             .padding(.bottom, 12)
 
@@ -335,10 +404,11 @@ struct ComposerView: View {
                         .lineLimit(1...20)
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.leading, 32)
+            .padding(.trailing, 32)
 
             Spacer()
-
+            
             // Reply settings
             HStack(spacing: 6) {
                 Image("icon-globe")
@@ -352,22 +422,58 @@ struct ComposerView: View {
                     .foregroundStyle(Color(hex: "#1D9BF0"))
                 Spacer()
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 32)
             .padding(.bottom, 12)
-
-            Divider()
-
-            // Media toolbar
-            HStack(spacing: 20) {
-                composerIcon("icon-photo")
-                composerIcon("icon-camera")
-                composerIcon("icon-grok")
-                composerIcon("icon-live")
-                composerIcon("icon-bulleted list")
+            
+            // Bottom toolbars
+            HStack(spacing: 8) {
+                // Main toolbar (left)
+                HStack(spacing: 20) {
+                    Button { } label: {
+                        composerIcon("icon-photo")
+                    }
+                    Button { } label: {
+                        composerIcon("icon-camera")
+                    }
+                    Button { } label: {
+                        composerIcon("icon-grok")
+                    }
+                    Button { } label: {
+                        composerIcon("icon-live")
+                    }
+                    Button { } label: {
+                        composerIcon("icon-bulleted list")
+                    }
+                    Button { } label: {
+                        composerIcon("icon-sparkles")
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 32))
+                
                 Spacer()
+                
+                // Small toolbar (right)
+                HStack(spacing: 16) {
+                    Button { } label: {
+                        Image("icon-counter")
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color(.label).opacity(0.3))
+                    }
+                    Button { } label: {
+                        composerIcon("icon-plus-fill")
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 32))
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.bottom, 8)
         }
         .background(Color(.systemBackground))
         .onAppear {
@@ -382,10 +488,11 @@ struct ComposerView: View {
             .resizable()
             .scaledToFit()
             .frame(width: 24, height: 24)
-            .foregroundStyle(Color(hex: "#1D9BF0"))
+            .foregroundStyle(Color(.label))
     }
 }
 
-#Preview {
+
+#Preview("Main Tab") {
     MainTabView()
 }

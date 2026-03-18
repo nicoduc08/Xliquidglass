@@ -11,10 +11,7 @@ struct NotificationsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                Text("Notifications")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding()
+                // Content goes here
             }
         }
         .navigationTitle("Notifications")

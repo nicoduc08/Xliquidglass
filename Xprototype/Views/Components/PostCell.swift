@@ -93,8 +93,9 @@ struct PostCell: View {
             if let imageName = post.imageName {
                 Image(imageName)
                     .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity)
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: 220)
+                    .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)

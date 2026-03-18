@@ -10,22 +10,27 @@ struct SidebarView: View {
     @Binding var isSettingsShowing: Bool
     @Binding var isPremiumShowing: Bool
     let user: User
+    var dragOffset: CGFloat = 0
     
     private let sidebarWidth: CGFloat = UIScreen.main.bounds.width * 0.78
     
+    private var dragProgress: CGFloat {
+        min(dragOffset / sidebarWidth, 1)
+    }
+    
+    private var sidebarBgColor: Color {
+        Color(UIColor { $0.userInterfaceStyle == .dark
+            ? UIColor(red: 0x0B/255, green: 0x0B/255, blue: 0x0B/255, alpha: 1)
+            : UIColor(red: 0xF2/255, green: 0xF2/255, blue: 0xF2/255, alpha: 1)
+        })
+    }
+    
     var body: some View {
         ZStack(alignment: .leading) {
-            // Dimmed background overlay
-            if isShowing {
-                Color(red: 0.737, green: 0.769, blue: 0.788)
-                    .opacity(0.35)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation(.easeOut(duration: 0.1)) {
-                            isShowing = false
-                        }
-                    }
-            }
+            // Full-bleed sidebar background
+            sidebarBgColor
+                .frame(width: sidebarWidth)
+                .ignoresSafeArea()
             
             // Sidebar content
             HStack(spacing: 0) {
@@ -81,12 +86,14 @@ struct SidebarView: View {
                     .padding(.bottom, 30)
                 }
                 .frame(width: sidebarWidth)
-                .background(Color(.systemBackground))
+
                 
                 Spacer()
             }
-            .offset(x: isShowing ? 0 : -sidebarWidth)
-            .animation(.easeOut(duration: 0.25), value: isShowing)
+            .scaleEffect(isShowing ? 1.0 : 0.96 + 0.04 * dragProgress)
+            .opacity(isShowing ? 1.0 : 0.6 + 0.4 * dragProgress)
+            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isShowing)
+            .animation(.interactiveSpring(), value: dragOffset)
         }
         .gesture(
             DragGesture()

@@ -154,8 +154,8 @@ struct PostDetailView: View {
                 Button {
                     dismiss()
                 } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 17, weight: .medium))
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(Color(.label))
                 }
             }
@@ -174,48 +174,87 @@ struct PostDetailView: View {
             }
         }
         .tabBarMinimizeBehavior(.never)
-        .onAppear {
-            // Scroll to top with animation to trigger tab bar expansion
-            withAnimation {
-                proxy.scrollTo("top", anchor: .top)
-            }
-        }
+        } // ScrollViewReader
         .safeAreaInset(edge: .bottom) {
-            // Reply input bar
-            HStack(spacing: 12) {
-                Image("Avatar 1")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 32, height: 32)
-                    .clipShape(Circle())
-                
-                TextField("", text: $replyText, prompt: Text("Post your reply").foregroundStyle(Color.secondaryText))
-                    .font(.chirpRegular(size: 15))
-                    .focused($isReplyFocused)
-                
+            VStack(alignment: .leading, spacing: 0) {
                 if isReplyFocused {
-                    Button {
-                        // Post reply action
-                        replyText = ""
-                        isReplyFocused = false
-                    } label: {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 28))
+                    // Replying to
+                    HStack(spacing: 4) {
+                        Text("Replying to")
+                            .font(.chirpRegular(size: 14))
+                            .foregroundStyle(.secondary)
+                        Text("@\(post.username)")
+                            .font(.chirpRegular(size: 14))
                             .foregroundStyle(Color(.label))
                     }
+                    .padding(.bottom, 10)
+                }
+                
+                // Avatar + text input
+                HStack(alignment: .center, spacing: 10) {
+                    Image("Avatar 1")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 32, height: 32)
+                        .clipShape(Circle())
+                    
+                    TextField("", text: $replyText, prompt: Text("Post your reply").foregroundStyle(Color.secondaryText))
+                        .font(.chirpRegular(size: isReplyFocused ? 16 : 15))
+                        .focused($isReplyFocused)
+                }
+                
+                if isReplyFocused {
+                    // Media icons + Reply button
+                    HStack {
+                        HStack(spacing: 24) {
+                            replyIcon("icon-photo")
+                            replyIcon("icon-camera")
+                            replyIcon("icon-grok")
+                            replyIcon("icon-live")
+                            replyIcon("icon-gif")
+                        }
+                        
+                        Spacer()
+                        
+                        Button {
+                            replyText = ""
+                            isReplyFocused = false
+                        } label: {
+                            Text("Reply")
+                                .font(.chirpBold(size: 15))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule().fill(replyText.isEmpty ? Color(.label).opacity(0.3) : Color(.label))
+                                )
+                        }
+                        .disabled(replyText.isEmpty)
+                    }
+                    .padding(.top, 10)
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.vertical, isReplyFocused ? 14 : 10)
             .contentShape(Rectangle())
             .onTapGesture {
                 isReplyFocused = true
             }
-            .glassEffect(.regular.interactive(), in: .capsule)
-            .padding(.horizontal, 24)
-            .padding(.bottom, 12)
+            .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: isReplyFocused ? 24 : 50))
+            .padding(.horizontal, isReplyFocused ? 16 : 24)
+            .padding(.bottom, isReplyFocused ? 8 : 12)
+            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isReplyFocused)
         }
-        } // ScrollViewReader
+    }
+    
+    @ViewBuilder
+    private func replyIcon(_ name: String) -> some View {
+        Image(name)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 22, height: 22)
+            .foregroundStyle(Color(.label))
     }
     
     // MARK: - Mock Replies

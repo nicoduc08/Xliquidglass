@@ -11,10 +11,7 @@ struct ExploreView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                Text("Explore")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding()
+                // Content goes here
             }
         }
         .navigationTitle("Explore")

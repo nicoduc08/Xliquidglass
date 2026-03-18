@@ -11,6 +11,7 @@ import SwiftUI
 struct FeedView: View {
     @Binding var isSidebarShowing: Bool
     @Binding var isInDetailView: Bool
+    var isDraggingSidebar: Bool = false
     @Namespace private var postTransition
     @State private var navigationPath = NavigationPath()
 
@@ -22,6 +23,7 @@ struct FeedView: View {
                 LazyVStack(spacing: 0) {
                     ForEach(posts) { post in
                         Button {
+                            guard !isDraggingSidebar else { return }
                             navigationPath.append(post)
                         } label: {
                             PostCell(post: post)
@@ -32,19 +34,20 @@ struct FeedView: View {
                                         .shadow(color: .clear, radius: 0)
                                 }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(NoHighlightButtonStyle())
                         Rectangle()
                             .fill(Color(.label).opacity(0.10))
                             .frame(height: 0.5)
                     }
                 }
             }
+            .scrollDisabled(isDraggingSidebar)
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        withAnimation(.easeOut(duration: 0.25)) {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
                             isSidebarShowing = true
                         }
                     } label: {
@@ -82,18 +85,6 @@ struct FeedView: View {
                     }
                 }
             }
-            .simultaneousGesture(
-                DragGesture()
-                    .onEnded { value in
-                        // Only respond to swipes starting near the left edge
-                        guard value.startLocation.x < 40 else { return }
-                        if value.translation.width > 80 || value.predictedEndTranslation.width > 150 {
-                            withAnimation(.easeOut(duration: 0.25)) {
-                                isSidebarShowing = true
-                            }
-                        }
-                    }
-            )
             .navigationDestination(for: Post.self) { post in
                 PostDetailView(post: post)
                     .navigationTransition(.zoom(sourceID: post.id, in: postTransition))
@@ -102,6 +93,13 @@ struct FeedView: View {
         .onChange(of: navigationPath.count) { _, newCount in
             isInDetailView = newCount > 0
         }
+    }
+}
+
+// MARK: - No Highlight Button Style
+struct NoHighlightButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
     }
 }
 

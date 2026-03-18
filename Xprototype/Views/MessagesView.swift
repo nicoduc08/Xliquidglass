@@ -11,13 +11,10 @@ struct MessagesView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                Text("Messages")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding()
+                // Content goes here
             }
         }
-        .navigationTitle("Messages")
+        .navigationTitle("Chat")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
